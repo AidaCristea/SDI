@@ -8,16 +8,16 @@ import com.example.A2MavenTry.Model.Singer;
 import com.example.A2MavenTry.Repository.RecordLableRepository;
 
 import com.example.A2MavenTry.Repository.SingerRepository;
+import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 import java.util.stream.Collectors;
 
@@ -61,13 +61,14 @@ public class RecordLablesController {
     }
 
     @PostMapping("/recordLbls")
-    public void createRecordLbl(@RequestBody RecordLable reclbl) {
+    public void createRecordLbl(@Valid @RequestBody RecordLable reclbl) {
         ModelMapper modelMapper=new ModelMapper();
         List<RecordLable> recordLables = rLrepo.findAll();
         rLrepo.save(reclbl);
         List<RecordLableDTO> recordLableDTOS = recordLables.stream()
                 .map(recordLable -> modelMapper.map(recordLable, RecordLableDTO.class))
                 .collect(Collectors.toList());
+
         //return recordLableDTOS;
         //return rLrepo.save(reclbl);
     }
@@ -162,6 +163,17 @@ public class RecordLablesController {
 
     }
 
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public Map<String, String> handleValidationExceptions(MethodArgumentNotValidException ex)
+    {
+        Map<String, String> errors = new HashMap<>();
+        ex.getBindingResult().getAllErrors().forEach((error) -> {
+            String fieldName =((FieldError) error).getField();
+            String errorMessage =error.getDefaultMessage();
+            errors.put(fieldName, errorMessage);
+        });
+        return errors;
+    }
 
 
 

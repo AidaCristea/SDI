@@ -4,6 +4,9 @@ package com.example.A2MavenTry.Model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 
 import java.io.Serializable;
@@ -18,8 +21,11 @@ public class Singer implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer idSinger;
+
     private String firstName;
+
     private String lastName;
+
     private Integer age;
     private String city;
     private String typeOfMusic;

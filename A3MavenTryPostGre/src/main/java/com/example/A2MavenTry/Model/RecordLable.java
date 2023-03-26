@@ -1,6 +1,9 @@
 package com.example.A2MavenTry.Model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 import java.io.Serializable;
 import java.util.List;
@@ -14,10 +17,13 @@ public class RecordLable implements Serializable {
     @Id
     @GeneratedValue(strategy =GenerationType.IDENTITY)
     private Integer idRecLbl;
+    @NotBlank(message ="Name is mandatory")
     private String nameRl;
     private String address;
+    @Min(value=1, message ="Price should be more than 0")
     private Integer price;
     private String review;
+    @NotNull(message = "The number of collaborations should not pe null")
     private Integer nrCollaborations;
 
     @OneToMany(mappedBy = "recordLable", fetch = FetchType.LAZY,

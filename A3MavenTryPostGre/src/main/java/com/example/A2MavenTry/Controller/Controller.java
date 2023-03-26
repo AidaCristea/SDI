@@ -88,10 +88,18 @@ public class Controller {
         repo.deleteById(id);
     }
 
+
     @GetMapping("/singers/greaterThan/{givenAge}")
-    public List<Singer> findByAgeGreaterThanEqual(@PathVariable Integer givenAge)
+    public List<SingerDTOWithId> findByAgeGreaterThanEqual(@PathVariable Integer givenAge)
     {
-        return repo.findByAgeGreaterThanEqual(givenAge);
+        ModelMapper modelMapper = new ModelMapper();
+        modelMapper.typeMap(Singer.class, SingerDTOWithId.class).addMapping(singer -> singer.getRecordLable().getIdRecLbl(), SingerDTOWithId::setRecLblId);
+        List<SingerDTOWithId> singerDTOWithIds = repo.findByAgeGreaterThanEqual(givenAge).stream()
+                .map(singer -> modelMapper.map(singer, SingerDTOWithId.class))
+                .collect(Collectors.toList());
+        return singerDTOWithIds;
+
+        //return repo.findByAgeGreaterThanEqual(givenAge);
     }
 
 
