@@ -125,12 +125,7 @@ public class SingerControllerTest {
     }
 
 
-    @Test
-    public void testSingersOrderedByAlbumNrOfSongs()
-    {
 
-
-    }
 
 
 

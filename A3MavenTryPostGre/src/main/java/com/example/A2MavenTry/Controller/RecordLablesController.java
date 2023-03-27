@@ -87,7 +87,8 @@ public class RecordLablesController {
     }
 
 
-    @PostMapping("/recordLbls/bulk/{id}")
+    //bulk function
+    @PostMapping("/recordLbls/{id}/singers")
     public List<Singer> addMoreSingers(@RequestBody List<Singer> singerList, @PathVariable Integer id)
     {
         RecordLable recordLable = rLrepo.findById(id).get();
@@ -137,7 +138,7 @@ public class RecordLablesController {
 
 
 
-    @PostMapping("/recordLbls/{id}/singers")
+    @PostMapping("/recordLbls/{id}/singer")
     public Singer addSingerToRecordLbl(@PathVariable("id") int id, @RequestBody Singer singer) {
         //find record lable by id
         RecordLable rclbl = rLrepo.findById(id)

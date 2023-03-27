@@ -13,7 +13,7 @@ public class A2MavenTryApplication {
 		SpringApplication.run(A2MavenTryApplication.class, args);
 	}
 
-	@Bean
+	/*@Bean
 	public WebMvcConfigurer corsConfigurer() {
 		return new WebMvcConfigurer() {
 			@Override
@@ -21,7 +21,7 @@ public class A2MavenTryApplication {
 				registry.addMapping("/singers").allowedOrigins("*");
 			}
 		};
-	}
+	}*/
 
 
 }
