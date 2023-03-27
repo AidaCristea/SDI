@@ -55,7 +55,6 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standal
 @ExtendWith(MockitoExtension.class)
 //@RunWith(MockitoJUnitRunner.class)
 public class SingerControllerTest {
-
     @Mock
     private SingerRepository singerRepository;
 
@@ -122,6 +121,13 @@ public class SingerControllerTest {
         List<SingerDTOWithId> result2 = singerController.findByAgeGreaterThanEqual(32);
         assertEquals(1, result2.size());
         assertEquals("Sheeran", result2.get(0).getLastName());*/
+
+    }
+
+
+    @Test
+    public void testSingersOrderedByAlbumNrOfSongs()
+    {
 
 
     }

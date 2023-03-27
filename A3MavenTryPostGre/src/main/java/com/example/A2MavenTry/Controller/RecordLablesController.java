@@ -1,10 +1,9 @@
 package com.example.A2MavenTry.Controller;
 
+import com.example.A2MavenTry.Exceptions.GroupNotFoundException;
 import com.example.A2MavenTry.Exceptions.RecordLableNotFoundException;
-import com.example.A2MavenTry.Model.RecordLable;
-import com.example.A2MavenTry.Model.RecordLableDTO;
-import com.example.A2MavenTry.Model.RecordLableDTOForAvg;
-import com.example.A2MavenTry.Model.Singer;
+import com.example.A2MavenTry.Exceptions.SingerNotFoundException;
+import com.example.A2MavenTry.Model.*;
 import com.example.A2MavenTry.Repository.RecordLableRepository;
 
 import com.example.A2MavenTry.Repository.SingerRepository;
@@ -54,11 +53,71 @@ public class RecordLablesController {
 
 
     @GetMapping("/recordLbls/{id}")
-    public RecordLable getRecLblById(@PathVariable("id") Integer id)
+    public RecordLableDTOWithSingerId getRecLblById(@PathVariable("id") Integer id)
     {
-        return rLrepo.findById(id)
-                .orElseThrow(()-> new RecordLableNotFoundException(id));
+
+        if(rLrepo.findById(id).isEmpty())
+            throw new RecordLableNotFoundException(id);
+
+        RecordLable recordLable=rLrepo.findById(id).get();
+        RecordLableDTOWithSingerId recordLableDTOWithSingerId = new RecordLableDTOWithSingerId();
+
+        List<Integer> singersId = new ArrayList<>();
+        List<Singer> singers = sgrepo.findAll();
+
+        for(Singer sg:singers)
+        {
+            if(sg.getRecordLable().getIdRecLbl() == recordLable.getIdRecLbl())
+            {
+                singersId.add(sg.getIdSinger());
+            }
+        }
+        recordLableDTOWithSingerId.setSingersId(singersId);
+        recordLableDTOWithSingerId.setRecordLable(recordLable);
+
+        return recordLableDTOWithSingerId;
+
+
+        /*ModelMapper modelMapper = new ModelMapper();
+        RecordLable recordLable=rLrepo.findById(id)
+                .orElseThrow(() -> new RecordLableNotFoundException(id));
+        RecordLableDTO recordLableDTO = modelMapper.map(recordLable, RecordLableDTO.class);
+
+        return recordLableDTO;*/
     }
+
+
+    @PostMapping("/recordLbls/bulk/{id}")
+    public List<Singer> addMoreSingers(@RequestBody List<Singer> singerList, @PathVariable Integer id)
+    {
+        RecordLable recordLable = rLrepo.findById(id).get();
+        List<Singer> singersfinalList = new ArrayList<>();
+        for(Singer sg : singerList)
+        {
+            Singer newSg = new Singer();
+            newSg.setFirstName(sg.getFirstName());
+            newSg.setLastName(sg.getLastName());
+            newSg.setIdSinger(sg.getIdSinger());
+            newSg.setCity(sg.getCity());
+            newSg.setTypeOfMusic(sg.getTypeOfMusic());
+            newSg.setAge(sg.getAge());
+            newSg.setRecordLable(recordLable);
+            if(sg.getAlbums()==null)
+                sg.setAlbums(new ArrayList<>());
+
+            newSg.setAlbums(sg.getAlbums());
+            newSg=sgrepo.save(newSg);
+            recordLable.getSingers().add(newSg);
+
+            singersfinalList.add(newSg);
+
+        }
+        rLrepo.save(recordLable);
+        return singersfinalList;
+
+    }
+
+
 
     @PostMapping("/recordLbls")
     public void createRecordLbl(@Valid @RequestBody RecordLable reclbl) {
@@ -72,6 +131,11 @@ public class RecordLablesController {
         //return recordLableDTOS;
         //return rLrepo.save(reclbl);
     }
+
+
+    //@PostMapping("/recordLbls/{id}/singers")
+
+
 
     @PostMapping("/recordLbls/{id}/singers")
     public Singer addSingerToRecordLbl(@PathVariable("id") int id, @RequestBody Singer singer) {
@@ -101,6 +165,8 @@ public class RecordLablesController {
         {
             //the singer doesn't exists, set the record prop for new singer
             singer.setRecordLable(rclbl);
+            List<Albums> list = new ArrayList<>();
+            singer.setAlbums(list);
             Singer savedSng = sgrepo.save(singer);
             rclbl.getSingers().add(savedSng);
             rLrepo.save(rclbl);

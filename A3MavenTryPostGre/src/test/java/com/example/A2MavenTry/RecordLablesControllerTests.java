@@ -36,7 +36,7 @@ import static org.mockito.Mockito.when;
 */
 
 
-
+/*
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.anyInt;
@@ -69,8 +69,32 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.test.context.junit4.SpringRunner;*/
+
+import com.example.A2MavenTry.Controller.Controller;
+import com.example.A2MavenTry.Controller.RecordLablesController;
+import com.example.A2MavenTry.Model.*;
+import com.example.A2MavenTry.Repository.RecordLableRepository;
+import com.example.A2MavenTry.Repository.SingerRepository;
+
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.Arrays;
+import java.util.List;
+
+import static org.junit.Assert.assertNotNull;
+import static org.mockito.Mockito.when;
+import static org.junit.Assert.assertEquals;
 
 //@ExtendWith(MockitoExtension.class)
 @RunWith(SpringRunner.class)
@@ -125,11 +149,11 @@ public class RecordLablesControllerTests {
 
         List<RecordLableDTOForAvg> result = response.getBody();
 
-        /*assertNotNull(result);
+        assertNotNull(result);
         assertEquals(2, result.size());
         assertEquals(45.66, result.get(0).getAvgSingerAge(), 0.01);
         assertEquals(37.50, result.get(1).getAvgSingerAge(), 0.01);
-        assertEquals("RecLbl2", result.get(1).getNameRl());*/
+        assertEquals("RecLbl2", result.get(1).getNameRl());
 
 
 
