@@ -23,6 +23,7 @@ import java.util.stream.Collectors;
 import static java.util.Collections.reverseOrder;
 
 @RestController
+
 public class RecordLablesController {
 
     @Autowired
