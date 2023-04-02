@@ -51,9 +51,19 @@ public class RecordLablesController {
         return recordLableDTOS;
     }
 
-
-
     @GetMapping("/recordLbls/{id}")
+    public RecordLable getRecLblById(@PathVariable Integer id)
+    {
+        if(rLrepo.findById(id).isEmpty())
+            throw new RecordLableNotFoundException(id);
+        RecordLable recordLable=rLrepo.findById(id).get();
+        return recordLable;
+
+    }
+
+
+    //more items
+    /*@GetMapping("/recordLbls/{id}")
     public RecordLableDTOWithSingerId getRecLblById(@PathVariable("id") Integer id)
     {
 
@@ -77,7 +87,7 @@ public class RecordLablesController {
         recordLableDTOWithSingerId.setRecordLable(recordLable);
 
         return recordLableDTOWithSingerId;
-
+*/
 
         /*ModelMapper modelMapper = new ModelMapper();
         RecordLable recordLable=rLrepo.findById(id)
@@ -85,7 +95,7 @@ public class RecordLablesController {
         RecordLableDTO recordLableDTO = modelMapper.map(recordLable, RecordLableDTO.class);
 
         return recordLableDTO;*/
-    }
+    //}
 
 
     //bulk function
@@ -140,10 +150,12 @@ public class RecordLablesController {
 
 
     @PostMapping("/recordLbls/{id}/singer")
-    public Singer addSingerToRecordLbl(@PathVariable("id") int id, @RequestBody Singer singer) {
+    public Singer addSingerToRecordLbl(@PathVariable("id") String id, @RequestBody Singer singer) {
+
+        Integer rec_id = Integer.parseInt(id);
         //find record lable by id
-        RecordLable rclbl = rLrepo.findById(id)
-                .orElseThrow(() -> new RecordLableNotFoundException(id));
+        RecordLable rclbl = rLrepo.findById(rec_id)
+                .orElseThrow(() -> new RecordLableNotFoundException(rec_id));
 
         //check if singer with given id already exists
         Singer existSng = null;
@@ -196,8 +208,9 @@ public class RecordLablesController {
     }
 
     @DeleteMapping("/recordLbls/{id}")
-    public void deleteRecordLblById(@PathVariable("id") int id) {
-        rLrepo.deleteById(id);
+    public void deleteRecordLblById(@PathVariable("id") String id) {
+        Integer rec_id = Integer.parseInt(id);
+        rLrepo.deleteById(rec_id);
 
     }
 

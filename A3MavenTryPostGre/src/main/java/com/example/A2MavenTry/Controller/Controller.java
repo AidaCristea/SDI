@@ -44,16 +44,17 @@ public class Controller {
 
 
     @GetMapping("/singers/{id}")
-    public SingerDTO getSingerById(@PathVariable("id") Integer id)
+    public SingerDTO getSingerById(@PathVariable("id") String id)
     {
-        if (repo.findById(id).isEmpty())
-            throw new SingerNotFoundException(id);
+        Integer singer_id = Integer.parseInt(id);
+        if (repo.findById(singer_id ).isEmpty())
+            throw new SingerNotFoundException(singer_id) ;
 
 
 
         ModelMapper modelMapper = new ModelMapper();
         modelMapper.typeMap(Singer.class, SingerDTO.class).addMapping(singer -> singer.getRecordLable(), SingerDTO::setRecLbl);
-        SingerDTO singerDTO = modelMapper.map(repo.findById(id).get(), SingerDTO.class);
+        SingerDTO singerDTO = modelMapper.map(repo.findById(singer_id ).get(), SingerDTO.class);
         return singerDTO;
 
 
