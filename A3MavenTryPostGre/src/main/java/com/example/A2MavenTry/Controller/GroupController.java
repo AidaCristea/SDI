@@ -4,6 +4,7 @@ package com.example.A2MavenTry.Controller;
 import com.example.A2MavenTry.Exceptions.GroupNotFoundException;
 import com.example.A2MavenTry.Model.*;
 import com.example.A2MavenTry.Repository.GroupRepository;
+import com.example.A2MavenTry.Service.GroupService;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,31 +17,43 @@ import java.util.stream.Collectors;
 
 @RestController
 public class GroupController {
-    @Autowired
-    GroupRepository groupRepo;
+    /*@Autowired
+    GroupRepository groupRepo;*/
 
-    public GroupController(GroupRepository groupRepo) {
+    @Autowired
+    GroupService groupService;
+
+
+    /*public GroupController(GroupRepository groupRepo) {
         this.groupRepo = groupRepo;
+    }*/
+
+    public GroupController(GroupService groupService) {
+        this.groupService = groupService;
     }
 
     @GetMapping("/groups")
     public List<GroupDTO> getAllGroups()
     {
-        ModelMapper modelMapper = new ModelMapper();
+        /*ModelMapper modelMapper = new ModelMapper();
 
         return groupRepo.findAll().stream()
                 .map(group -> modelMapper.map(group, GroupDTO.class))
-                .collect(Collectors.toList());
+                .collect(Collectors.toList());*/
+
+        return this.groupService.getAllGroups();
     }
 
     @GetMapping("/groups/{id}")
     public GroupDTO getGroup(@PathVariable Integer id)
     {
-        ModelMapper modelMapper = new ModelMapper();
+        /*ModelMapper modelMapper = new ModelMapper();
         Group group=groupRepo.findById(id)
                 .orElseThrow(() -> new GroupNotFoundException(id));
         GroupDTO groupDTO=modelMapper.map(group, GroupDTO.class);
-        return groupDTO;
+        return groupDTO;*/
+
+        return this.groupService.getGroup(id);
 
 
     }
@@ -48,13 +61,14 @@ public class GroupController {
     @PostMapping("/groups")
     Group newGroup (@RequestBody Group newGr)
     {
-        return groupRepo.save(newGr);
+        /*return groupRepo.save(newGr);*/
+        return this.groupService.newGroup(newGr);
     }
 
     @PutMapping("/groups/{id}")
     Group replaceGroup(@RequestBody Group newGr, @PathVariable Integer id)
     {
-        return groupRepo.findById(id)
+        /*return groupRepo.findById(id)
                 .map(group -> {
                     group.setMembers(newGr.getMembers());
                     group.setDateFormed(newGr.getDateFormed());
@@ -66,13 +80,16 @@ public class GroupController {
                 .orElseGet(() -> {
                     newGr.setIdGroup(id);
                     return groupRepo.save(newGr);
-                });
+                });*/
+
+        return this.groupService.replaceGroup(newGr, id);
     }
 
     @DeleteMapping("/groups/{id}")
     void deleteGroup(@PathVariable Integer id)
     {
-        groupRepo.deleteById(id);
+        /*groupRepo.deleteById(id);*/
+        this.groupService.deleteGroup(id);
     }
 
 

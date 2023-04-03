@@ -1,61 +1,49 @@
-package com.example.A2MavenTry.Controller;
+package com.example.A2MavenTry.Service;
 
-
-import com.example.A2MavenTry.Exceptions.RecordLableNotFoundException;
 import com.example.A2MavenTry.Exceptions.SingerNotFoundException;
-import com.example.A2MavenTry.Model.*;
-import com.example.A2MavenTry.Repository.RecordLableRepository;
+import com.example.A2MavenTry.Model.Singer;
+import com.example.A2MavenTry.Model.SingerDTO;
+import com.example.A2MavenTry.Model.SingerDTOForAvg;
+import com.example.A2MavenTry.Model.SingerDTOWithId;
 import com.example.A2MavenTry.Repository.SingerRepository;
-import com.example.A2MavenTry.Service.SingerService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.Banner;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
-@RestController
-public class Controller {
-    /*@Autowired
+@Service
+public class SingerService {
+    @Autowired
     private final SingerRepository repo;
 
 
-    public Controller(SingerRepository repo) {
+    public SingerService(SingerRepository repo) {
         this.repo = repo;
-    }*/
-
-    @Autowired
-    private final SingerService singerService;
-
-    public Controller(SingerService singerService) {
-        this.singerService = singerService;
     }
 
-    @GetMapping("/singers")
+    //@GetMapping("/singers")
     public List<SingerDTOWithId> getAll()
     {
-        /*ModelMapper modelMapper = new ModelMapper();
+        ModelMapper modelMapper = new ModelMapper();
         modelMapper.typeMap(Singer.class, SingerDTOWithId.class).addMapping(singer -> singer.getRecordLable().getIdRecLbl(), SingerDTOWithId::setRecLblId);
         List<SingerDTOWithId> singerDTOWithIds = repo.findAll().stream()
                 .map(singer -> modelMapper.map(singer, SingerDTOWithId.class))
                 .collect(Collectors.toList());
         return singerDTOWithIds;
-*/
-        return this.singerService.getAll();
+
 
     }
 
 
-    @GetMapping("/singers/{id}")
-    public SingerDTO getSingerById(@PathVariable("id") String id)
+    //@GetMapping("/singers/{id}")
+    public SingerDTO getSingerById(String id)
     {
-        /*Integer singer_id = Integer.parseInt(id);
+        Integer singer_id = Integer.parseInt(id);
         if (repo.findById(singer_id ).isEmpty())
             throw new SingerNotFoundException(singer_id) ;
 
@@ -64,19 +52,17 @@ public class Controller {
         ModelMapper modelMapper = new ModelMapper();
         modelMapper.typeMap(Singer.class, SingerDTO.class).addMapping(singer -> singer.getRecordLable(), SingerDTO::setRecLbl);
         SingerDTO singerDTO = modelMapper.map(repo.findById(singer_id ).get(), SingerDTO.class);
-        return singerDTO;*/
-
-        return this.singerService.getSingerById(id);
+        return singerDTO;
 
 
     }
 
 
 
-    @PutMapping("/singers/{id}")
-    Singer replaceSinger(@RequestBody Singer newSinger, @PathVariable Integer id)
+    //@PutMapping("/singers/{id}")
+    public Singer replaceSinger( Singer newSinger,  Integer id)
     {
-        /*return repo.findById(id)
+        return repo.findById(id)
                 .map(singer -> {
                     singer.setAge(newSinger.getAge());
                     singer.setCity(newSinger.getCity());
@@ -88,42 +74,38 @@ public class Controller {
                 .orElseGet(() -> {
                     newSinger.setIdSinger(id);
                     return repo.save(newSinger);
-                });*/
-
-        return singerService.replaceSinger(newSinger, id);
+                });
 
 
     }
 
 
-    @DeleteMapping("/singers/{id}")
-    public void deleteSingerById(@PathVariable("id") Integer id)
+    //@DeleteMapping("/singers/{id}")
+    public void deleteSingerById( Integer id)
     {
-        //repo.deleteById(id);
-        this.singerService.deleteSingerById(id);
+        repo.deleteById(id);
     }
 
 
-    @GetMapping("/singers/greaterThan/{givenAge}")
-    public List<SingerDTOWithId> findByAgeGreaterThanEqual(@PathVariable Integer givenAge)
+    //@GetMapping("/singers/greaterThan/{givenAge}")
+    public List<SingerDTOWithId> findByAgeGreaterThanEqual( Integer givenAge)
     {
-        /*ModelMapper modelMapper = new ModelMapper();
+        ModelMapper modelMapper = new ModelMapper();
         modelMapper.typeMap(Singer.class, SingerDTOWithId.class).addMapping(singer -> singer.getRecordLable().getIdRecLbl(), SingerDTOWithId::setRecLblId);
         List<SingerDTOWithId> singerDTOWithIds = repo.findByAgeGreaterThanEqual(givenAge).stream()
                 .map(singer -> modelMapper.map(singer, SingerDTOWithId.class))
                 .collect(Collectors.toList());
-        return singerDTOWithIds;*/
+        return singerDTOWithIds;
 
-        return singerService.findByAgeGreaterThanEqual(givenAge);
         //return repo.findByAgeGreaterThanEqual(givenAge);
     }
 
 
 
-    @GetMapping("/average-nr-songs")
+    //@GetMapping("/average-nr-songs")
     public List<SingerDTOForAvg> singersOrderedByAlbumNrOfSongs()
     {
-        /*ModelMapper modelMapper=new ModelMapper();
+        ModelMapper modelMapper=new ModelMapper();
         List<Singer> singersList = repo.findAll();
 
         singersList.sort(Comparator.comparing(Singer::getAverageAlbumNrSongs)
@@ -148,10 +130,7 @@ public class Controller {
 
             }
         }
-        return singerDTOForAvgList;*/
-
-        return this.singerService.singersOrderedByAlbumNrOfSongs();
+        return singerDTOForAvgList;
     }
-
 
 }

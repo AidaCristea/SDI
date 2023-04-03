@@ -1,5 +1,4 @@
-package com.example.A2MavenTry.Controller;
-
+package com.example.A2MavenTry.Service;
 
 import com.example.A2MavenTry.Exceptions.AlbumNotFoundException;
 import com.example.A2MavenTry.Exceptions.GroupNotFoundException;
@@ -8,60 +7,48 @@ import com.example.A2MavenTry.Model.*;
 import com.example.A2MavenTry.Repository.AlbumsRepository;
 import com.example.A2MavenTry.Repository.GroupRepository;
 import com.example.A2MavenTry.Repository.SingerRepository;
-import com.example.A2MavenTry.Service.AlbumService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.Banner;
+import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-@RestController
-public class AlbumController {
-    /*@Autowired
+@Service
+public class AlbumService {
+    @Autowired
     AlbumsRepository albumsRepository;
 
     @Autowired
     GroupRepository groupRepository;
 
     @Autowired
-    SingerRepository singerRepository;*/
+    SingerRepository singerRepository;
 
-    @Autowired
-    AlbumService albumService;
-
-    /*public AlbumController(AlbumsRepository albumsRepository, GroupRepository groupRepository, SingerRepository singerRepository) {
+    public AlbumService(AlbumsRepository albumsRepository, GroupRepository groupRepository, SingerRepository singerRepository) {
         this.albumsRepository = albumsRepository;
         this.groupRepository = groupRepository;
         this.singerRepository = singerRepository;
-    }*/
-
-    public AlbumController(AlbumService albumService) {
-        this.albumService = albumService;
     }
 
-
-
-    @GetMapping("/albums")
+    //@GetMapping("/albums")
     public List<AlbumDTOWithId> getAllAlbums()
     {
-        /*ModelMapper modelMapper=new ModelMapper();
+        ModelMapper modelMapper=new ModelMapper();
         return albumsRepository.findAll().stream()
                 .map(al -> modelMapper.map(al, AlbumDTOWithId.class))
                 .collect(Collectors.toList());
-*/
-        return this.albumService.getAllAlbums();
+
     }
 
-    @GetMapping("/albums/{id}")
-    public AlbumsDTO getAlbumsById(@PathVariable Integer id)
+    //@GetMapping("/albums/{id}")
+    public AlbumsDTO getAlbumsById(Integer id)
     {
-        /*ModelMapper modelMapper=new ModelMapper();
+        ModelMapper modelMapper=new ModelMapper();
         return albumsRepository.findById(id)
                 .map(al -> modelMapper.map(al, AlbumsDTO.class))
-                .orElseThrow(() -> new AlbumNotFoundException(id));*/
-        return this.albumService.getAlbumsById(id);
+                .orElseThrow(() -> new AlbumNotFoundException(id));
     }
 
 /*    @PostMapping("/albums")
@@ -75,11 +62,11 @@ public class AlbumController {
 
 
     //create/add Group for a Singer
-    @PostMapping("/albums/singers/{id}/groups/{idd}")
-    public Albums addAlbumToSingerAndGroup(@PathVariable("id") Integer id, @PathVariable("idd") Integer idd, @RequestBody Albums album)
+    //@PostMapping("/albums/singers/{id}/groups/{idd}")
+    public Albums addAlbumToSingerAndGroup(Integer id, Integer idd, Albums album)
     {
         //find singer by id
-        /*Singer singer = singerRepository.findById(id)
+        Singer singer = singerRepository.findById(id)
                 .orElseThrow(() -> new SingerNotFoundException(id));
 
         //find group by id
@@ -93,17 +80,15 @@ public class AlbumController {
 
         singer.getAlbums().add(al);
         group.getAlbums().add(al);
-        return al;*/
-
-        return this.albumService.addAlbumToSingerAndGroup(id, idd, album);
+        return al;
 
     }
 
 
-    @PutMapping("/albums/{id}")
-    Albums replaceAlbum(@RequestBody Albums al, @PathVariable Integer id)
+    //@PutMapping("/albums/{id}")
+    public Albums replaceAlbum( Albums al, Integer id)
     {
-        /*return albumsRepository.findById(id)
+        return albumsRepository.findById(id)
                 .map(album -> {
                     album.setAlbumName(al.getAlbumName());
                     album.setYearRelease(al.getYearRelease());
@@ -113,19 +98,17 @@ public class AlbumController {
                 .orElseGet(() -> {
                     al.setIdAlbum(id);
                     return albumsRepository.save(al);
-                });*/
-        return albumService.replaceAlbum(al, id);
+                });
     }
 
-    @DeleteMapping("/albums/{id}")
-    public void deleteAlbumById(@PathVariable Integer id)
+    //@DeleteMapping("/albums/{id}")
+    public void deleteAlbumById(Integer id)
     {
-        //albumsRepository.deleteById(id);
-        albumService.deleteAlbumById(id);
+        albumsRepository.deleteById(id);
     }
-
 
 
 
 }
+
 

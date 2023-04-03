@@ -1,73 +1,54 @@
-package com.example.A2MavenTry.Controller;
+package com.example.A2MavenTry.Service;
 
-import com.example.A2MavenTry.Exceptions.GroupNotFoundException;
 import com.example.A2MavenTry.Exceptions.RecordLableNotFoundException;
-import com.example.A2MavenTry.Exceptions.SingerNotFoundException;
 import com.example.A2MavenTry.Model.*;
 import com.example.A2MavenTry.Repository.RecordLableRepository;
-
 import com.example.A2MavenTry.Repository.SingerRepository;
-import com.example.A2MavenTry.Service.RecordLablesService;
 import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-
+import org.springframework.stereotype.Service;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
-
 import java.util.*;
-
 import java.util.stream.Collectors;
 
-import static java.util.Collections.reverseOrder;
-
-@RestController
-
-public class RecordLablesController {
-
-    /*@Autowired
+@Service
+public class RecordLablesService {
+    @Autowired
     RecordLableRepository rLrepo;
 
     @Autowired
-    SingerRepository sgrepo;*/
-
-    @Autowired
-    RecordLablesService recordLablesService;
+    SingerRepository sgrepo;
 
 
-    /*public RecordLablesController(RecordLableRepository rLrepo, SingerRepository sgrepo) {
+
+    public RecordLablesService(RecordLableRepository rLrepo, SingerRepository sgrepo) {
         this.rLrepo = rLrepo;
         this.sgrepo = sgrepo;
-    }*/
-
-    public RecordLablesController(RecordLablesService recordLablesService) {
-        this.recordLablesService = recordLablesService;
     }
 
-    @GetMapping("/recordLbls")
+
+    //@GetMapping("/recordLbls")
     public List<RecordLableDTO> getAllRecLbls()
     {
-        /*ModelMapper modelMapper = new ModelMapper();
+        ModelMapper modelMapper = new ModelMapper();
         List<RecordLable> recordLables = rLrepo.findAll();
         List<RecordLableDTO> recordLableDTOS = recordLables.stream()
                 .map(recordLable -> modelMapper.map(recordLable, RecordLableDTO.class))
                 .collect(Collectors.toList());
-        return recordLableDTOS;*/
-
-        return this.recordLablesService.getAllRecLbls();
+        return recordLableDTOS;
     }
 
-    @GetMapping("/recordLbls/{id}")
-    public RecordLable getRecLblById(@PathVariable Integer id)
+    //@GetMapping("/recordLbls/{id}")
+    public RecordLable getRecLblById( Integer id)
     {
-        /*if(rLrepo.findById(id).isEmpty())
+        if(rLrepo.findById(id).isEmpty())
             throw new RecordLableNotFoundException(id);
         RecordLable recordLable=rLrepo.findById(id).get();
-        return recordLable;*/
-
-        return this.recordLablesService.getRecLblById(id);
+        return recordLable;
 
     }
 
@@ -109,10 +90,10 @@ public class RecordLablesController {
 
 
     //bulk function
-    @PostMapping("/recordLbls/{id}/singers")
-    public List<Singer> addMoreSingers(@RequestBody List<Singer> singerList, @PathVariable Integer id)
+    //@PostMapping("/recordLbls/{id}/singers")
+    public List<Singer> addMoreSingers( List<Singer> singerList,  Integer id)
     {
-        /*RecordLable recordLable = rLrepo.findById(id).get();
+        RecordLable recordLable = rLrepo.findById(id).get();
         List<Singer> singersfinalList = new ArrayList<>();
         for(Singer sg : singerList)
         {
@@ -135,27 +116,23 @@ public class RecordLablesController {
 
         }
         rLrepo.save(recordLable);
-        return singersfinalList;*/
-
-        return this.recordLablesService.addMoreSingers(singerList, id);
+        return singersfinalList;
 
     }
 
 
 
-    @PostMapping("/recordLbls")
-    public void createRecordLbl(@Valid @RequestBody RecordLable reclbl) {
-        /*ModelMapper modelMapper=new ModelMapper();
+    //@PostMapping("/recordLbls")
+    public void createRecordLbl( RecordLable reclbl) {
+        ModelMapper modelMapper=new ModelMapper();
         List<RecordLable> recordLables = rLrepo.findAll();
         rLrepo.save(reclbl);
         List<RecordLableDTO> recordLableDTOS = recordLables.stream()
                 .map(recordLable -> modelMapper.map(recordLable, RecordLableDTO.class))
-                .collect(Collectors.toList());*/
+                .collect(Collectors.toList());
 
         //return recordLableDTOS;
         //return rLrepo.save(reclbl);
-
-        this.recordLablesService.createRecordLbl(reclbl);
     }
 
 
@@ -163,10 +140,10 @@ public class RecordLablesController {
 
 
 
-    @PostMapping("/recordLbls/{id}/singer")
-    public Singer addSingerToRecordLbl(@PathVariable("id") String id, @RequestBody Singer singer) {
+    //@PostMapping("/recordLbls/{id}/singer")
+    public Singer addSingerToRecordLbl( String id,  Singer singer) {
 
-        /*Integer rec_id = Integer.parseInt(id);
+        Integer rec_id = Integer.parseInt(id);
         //find record lable by id
         RecordLable rclbl = rLrepo.findById(rec_id)
                 .orElseThrow(() -> new RecordLableNotFoundException(rec_id));
@@ -199,16 +176,14 @@ public class RecordLablesController {
             rclbl.getSingers().add(savedSng);
             rLrepo.save(rclbl);
             return savedSng;
-        }*/
-
-        return this.recordLablesService.addSingerToRecordLbl(id, singer);
+        }
 
     }
 
-    @PutMapping("/recordLbls/{id}")
-    RecordLable replaceRecLbl(@RequestBody RecordLable newRecLbl, @PathVariable Integer id)
+    //@PutMapping("/recordLbls/{id}")
+    public RecordLable replaceRecLbl(RecordLable newRecLbl, Integer id)
     {
-        /*return rLrepo.findById(id)
+        return rLrepo.findById(id)
                 .map(rclbl -> {
                     rclbl.setAddress(newRecLbl.getAddress());
                     rclbl.setNameRl(newRecLbl.getNameRl());
@@ -220,23 +195,20 @@ public class RecordLablesController {
                 .orElseGet(() -> {
                     newRecLbl.setIdRecLbl(id);
                     return rLrepo.save(newRecLbl);
-                });*/
-
-        return this.recordLablesService.replaceRecLbl(newRecLbl, id);
+                });
     }
 
-    @DeleteMapping("/recordLbls/{id}")
-    public void deleteRecordLblById(@PathVariable("id") String id) {
-        /*Integer rec_id = Integer.parseInt(id);
-        rLrepo.deleteById(rec_id);*/
-        this.recordLablesService.deleteRecordLblById(id);
+    //@DeleteMapping("/recordLbls/{id}")
+    public void deleteRecordLblById( String id) {
+        Integer rec_id = Integer.parseInt(id);
+        rLrepo.deleteById(rec_id);
 
     }
 
-    @GetMapping("/average-age")
+    //@GetMapping("/average-age")
     public List<RecordLableDTOForAvg> recordLableOrderBySingerAgeAvg()
     {
-        /*ModelMapper modelMapper = new ModelMapper();
+        ModelMapper modelMapper = new ModelMapper();
         List<RecordLable> recordLableList = rLrepo.findAll();
 
         recordLableList.sort(Comparator.comparingDouble(RecordLable::getAverageSingerAge)
@@ -259,24 +231,9 @@ public class RecordLablesController {
             }
         }
 
-        return recordLableDTOForAvgList;*/
-
-        return this.recordLablesService.recordLableOrderBySingerAgeAvg();
+        return recordLableDTOForAvgList;
 
     }
-
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public Map<String, String> handleValidationExceptions(MethodArgumentNotValidException ex)
-    {
-        Map<String, String> errors = new HashMap<>();
-        ex.getBindingResult().getAllErrors().forEach((error) -> {
-            String fieldName =((FieldError) error).getField();
-            String errorMessage =error.getDefaultMessage();
-            errors.put(fieldName, errorMessage);
-        });
-        return errors;
-    }
-
 
 
 
