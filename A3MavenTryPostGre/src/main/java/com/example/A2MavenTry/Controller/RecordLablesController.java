@@ -12,6 +12,7 @@ import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import org.springframework.data.domain.PageRequest;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
@@ -47,8 +48,28 @@ public class RecordLablesController {
         this.recordLablesService = recordLablesService;
     }
 
-    @GetMapping("/recordLbls")
+    /*@GetMapping("/recordLbls")
     public List<RecordLableDTO> getAllRecLbls()
+    {
+        *//*ModelMapper modelMapper = new ModelMapper();
+        List<RecordLable> recordLables = rLrepo.findAll();
+        List<RecordLableDTO> recordLableDTOS = recordLables.stream()
+                .map(recordLable -> modelMapper.map(recordLable, RecordLableDTO.class))
+                .collect(Collectors.toList());
+        return recordLableDTOS;*//*
+
+        return this.recordLablesService.getAllRecLbls();
+    }
+*/
+
+    @GetMapping("/recordLbls/countAll")
+    public Long countAllRecordLbls()
+    {
+        return this.recordLablesService.countAllRecordLbls();
+    }
+
+    @GetMapping("/recordLbls/page/{page}/size/{size}")
+    public List<RecordLableDTO> getAllRecLbls(@PathVariable int page, @PathVariable int size)
     {
         /*ModelMapper modelMapper = new ModelMapper();
         List<RecordLable> recordLables = rLrepo.findAll();
@@ -57,7 +78,10 @@ public class RecordLablesController {
                 .collect(Collectors.toList());
         return recordLableDTOS;*/
 
-        return this.recordLablesService.getAllRecLbls();
+        //return this.recordLablesService.getAllRecLbls();
+
+        PageRequest pr = PageRequest.of(page, size);
+        return this.recordLablesService.getAllRecLbls(pr);
     }
 
     @GetMapping("/recordLbls/{id}")

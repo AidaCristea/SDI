@@ -7,6 +7,8 @@ import com.example.A2MavenTry.Repository.SingerRepository;
 import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -32,7 +34,7 @@ public class RecordLablesService {
 
 
     //@GetMapping("/recordLbls")
-    public List<RecordLableDTO> getAllRecLbls()
+    /*public List<RecordLableDTO> getAllRecLbls()
     {
         ModelMapper modelMapper = new ModelMapper();
         List<RecordLable> recordLables = rLrepo.findAll();
@@ -40,7 +42,24 @@ public class RecordLablesService {
                 .map(recordLable -> modelMapper.map(recordLable, RecordLableDTO.class))
                 .collect(Collectors.toList());
         return recordLableDTOS;
+    }*/
+
+    public Long countAllRecordLbls()
+    {
+        return rLrepo.count();
     }
+
+    public List<RecordLableDTO> getAllRecLbls(PageRequest pr)
+    {
+        ModelMapper modelMapper = new ModelMapper();
+        //List<RecordLable> recordLables = rLrepo.findAll();
+        Page<RecordLable> recordLables = rLrepo.findAll(pr);
+        List<RecordLableDTO> recordLableDTOS = recordLables.stream()
+                .map(recordLable -> modelMapper.map(recordLable, RecordLableDTO.class))
+                .collect(Collectors.toList());
+        return recordLableDTOS;
+    }
+
 
     //@GetMapping("/recordLbls/{id}")
     public RecordLable getRecLblById( Integer id)
@@ -234,9 +253,5 @@ public class RecordLablesService {
         return recordLableDTOForAvgList;
 
     }
-
-
-
-
 
 }
