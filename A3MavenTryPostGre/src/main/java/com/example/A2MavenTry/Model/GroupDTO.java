@@ -11,6 +11,6 @@ public class GroupDTO {
     private String nameGr;
     private String musicSpecialization;
     private String review;
-
+    private String description;
 
 }

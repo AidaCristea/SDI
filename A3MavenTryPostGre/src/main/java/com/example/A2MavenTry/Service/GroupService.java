@@ -59,6 +59,7 @@ public class GroupService {
                     group.setNameGr(newGr.getNameGr());
                     group.setMusicSpecialization(newGr.getMusicSpecialization());
                     group.setReview(newGr.getReview());
+                    group.setDescription(newGr.getDescription());
                     return groupRepo.save(group);
                 })
                 .orElseGet(() -> {

@@ -22,6 +22,9 @@ public class Group implements Serializable {
     private String musicSpecialization;
     private String review;
 
+    private String description;
+
+
     @OneToMany(mappedBy = "group", fetch = FetchType.LAZY,
             cascade = CascadeType.ALL)
     List<Albums> albums;
@@ -36,14 +39,30 @@ public class Group implements Serializable {
     }
     public Group(){}
 
-    public Group(Integer members, String dateFormed, String nameGr, String musicSpecialization, String review) {
+    public Group(Integer members, String dateFormed, String nameGr, String musicSpecialization, String review, String description) {
         this.members = members;
         this.dateFormed = dateFormed;
         this.nameGr = nameGr;
         this.musicSpecialization = musicSpecialization;
         this.review = review;
+        this.description = description;
     }
 
+    /*public Group(Integer members, String dateFormed, String nameGr, String musicSpecialization, String review) {
+        this.members = members;
+        this.dateFormed = dateFormed;
+        this.nameGr = nameGr;
+        this.musicSpecialization = musicSpecialization;
+        this.review = review;
+    }*/
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
     public Integer getIdGroup() {
         return idGroup;
@@ -105,11 +124,11 @@ public class Group implements Serializable {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof Group group)) return false;
-        return Objects.equals(idGroup, group.idGroup) && Objects.equals(members, group.members) && Objects.equals(dateFormed, group.dateFormed) && Objects.equals(nameGr, group.nameGr) && Objects.equals(musicSpecialization, group.musicSpecialization) && Objects.equals(review, group.review) && Objects.equals(albums, group.albums);
+        return Objects.equals(idGroup, group.idGroup) && Objects.equals(members, group.members) && Objects.equals(dateFormed, group.dateFormed) && Objects.equals(nameGr, group.nameGr) && Objects.equals(musicSpecialization, group.musicSpecialization) && Objects.equals(review, group.review) && Objects.equals(description, group.description) && Objects.equals(albums, group.albums);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(idGroup, members, dateFormed, nameGr, musicSpecialization, review, albums);
+        return Objects.hash(idGroup, members, dateFormed, nameGr, musicSpecialization, review, description, albums);
     }
 }

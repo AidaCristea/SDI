@@ -8,12 +8,21 @@ public class GroupDTOForAvg {
     private String nameGr;
     private String musicSpecialization;
     private String review;
+    private String description;
     private Double avgAlbumsNrSongs;
 
     public GroupDTOForAvg(){}
 
     public Integer getId() {
         return id;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public void setId(Integer id) {
