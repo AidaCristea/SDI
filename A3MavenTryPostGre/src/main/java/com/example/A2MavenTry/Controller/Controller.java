@@ -10,6 +10,7 @@ import com.example.A2MavenTry.Service.SingerService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.Banner;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -37,17 +38,31 @@ public class Controller {
         this.singerService = singerService;
     }
 
-    @GetMapping("/singers")
+    @GetMapping("/singers/countAll")
+    public Long countAllSingers()
+    {
+        return this.singerService.countAllSingers();
+    }
+
+    /*@GetMapping("/singers")
     public List<SingerDTOWithId> getAll()
     {
-        /*ModelMapper modelMapper = new ModelMapper();
+        *//*ModelMapper modelMapper = new ModelMapper();
         modelMapper.typeMap(Singer.class, SingerDTOWithId.class).addMapping(singer -> singer.getRecordLable().getIdRecLbl(), SingerDTOWithId::setRecLblId);
         List<SingerDTOWithId> singerDTOWithIds = repo.findAll().stream()
                 .map(singer -> modelMapper.map(singer, SingerDTOWithId.class))
                 .collect(Collectors.toList());
         return singerDTOWithIds;
-*/
+*//*
         return this.singerService.getAll();
+
+    }*/
+
+    @GetMapping("/singers/page/{page}/size/{size}")
+    public List<SingerDTOWithId> getAll(@PathVariable int page, @PathVariable int size)
+    {
+        PageRequest pr = PageRequest.of(page, size);
+        return this.singerService.getAll(pr);
 
     }
 

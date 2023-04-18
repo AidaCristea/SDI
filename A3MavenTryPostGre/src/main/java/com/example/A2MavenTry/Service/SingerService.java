@@ -8,6 +8,8 @@ import com.example.A2MavenTry.Model.SingerDTOWithId;
 import com.example.A2MavenTry.Repository.SingerRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,12 +28,21 @@ public class SingerService {
         this.repo = repo;
     }
 
+
+
+    public Long countAllSingers()
+    {
+        return repo.count();
+    }
+
+
     //@GetMapping("/singers")
-    public List<SingerDTOWithId> getAll()
+    public List<SingerDTOWithId> getAll(PageRequest pr)
     {
         ModelMapper modelMapper = new ModelMapper();
         modelMapper.typeMap(Singer.class, SingerDTOWithId.class).addMapping(singer -> singer.getRecordLable().getIdRecLbl(), SingerDTOWithId::setRecLblId);
-        List<SingerDTOWithId> singerDTOWithIds = repo.findAll().stream()
+        Page<Singer> singers=repo.findAll(pr);
+        List<SingerDTOWithId> singerDTOWithIds = singers.stream()
                 .map(singer -> modelMapper.map(singer, SingerDTOWithId.class))
                 .collect(Collectors.toList());
         return singerDTOWithIds;
