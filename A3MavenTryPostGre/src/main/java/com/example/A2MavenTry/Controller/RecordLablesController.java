@@ -258,8 +258,8 @@ public class RecordLablesController {
 
     }
 
-    @GetMapping("/average-age")
-    public List<RecordLableDTOForAvg> recordLableOrderBySingerAgeAvg()
+    @GetMapping("/average-age/page/{page}/size/{size}")
+    public List<RecordLableDTOForAvg> recordLableOrderBySingerAgeAvg(@PathVariable int page, @PathVariable int size)
     {
         /*ModelMapper modelMapper = new ModelMapper();
         List<RecordLable> recordLableList = rLrepo.findAll();
@@ -285,8 +285,8 @@ public class RecordLablesController {
         }
 
         return recordLableDTOForAvgList;*/
-
-        return this.recordLablesService.recordLableOrderBySingerAgeAvg();
+        PageRequest pr = PageRequest.of(page, size);
+        return this.recordLablesService.recordLableOrderBySingerAgeAvg(pr);
 
     }
 

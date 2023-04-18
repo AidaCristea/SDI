@@ -225,7 +225,7 @@ public class RecordLablesService {
     }
 
     //@GetMapping("/average-age")
-    public List<RecordLableDTOForAvg> recordLableOrderBySingerAgeAvg()
+    public List<RecordLableDTOForAvg> recordLableOrderBySingerAgeAvg(PageRequest pr)
     {
         ModelMapper modelMapper = new ModelMapper();
         List<RecordLable> recordLableList = rLrepo.findAll();
