@@ -45,12 +45,22 @@ public class Singer implements Serializable {
 
     public Singer(){}
 
-    public Singer(String firstName, String lastName, Integer age, String city, String typeOfMusic) {
+    /*public Singer(String firstName, String lastName, Integer age, String city, String typeOfMusic) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.age = age;
         this.city = city;
         this.typeOfMusic = typeOfMusic;
+    }*/
+
+
+    public Singer(String firstName, String lastName, Integer age, String city, String typeOfMusic, RecordLable recordLable) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.age = age;
+        this.city = city;
+        this.typeOfMusic = typeOfMusic;
+        this.recordLable = recordLable;
     }
 
     public double getAverageAlbumNrSongs()

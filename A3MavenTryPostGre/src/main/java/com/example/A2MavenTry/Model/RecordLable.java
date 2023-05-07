@@ -40,7 +40,6 @@ public class RecordLable implements Serializable {
                 .mapToInt(singer -> singer.getAge())
                 .sum();
         return sumOfAges/(double) singers.size();
-
     }
 
     public RecordLable() {}

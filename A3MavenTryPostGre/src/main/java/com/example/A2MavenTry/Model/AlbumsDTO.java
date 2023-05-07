@@ -11,6 +11,7 @@ public class AlbumsDTO {
     private Integer noSongs;
 
     private GroupDTO group;
-    private SingerDTOWithId singer;
+    //private SingerDTOWithId singer;
+    private SingerDTO singer;
 
 }

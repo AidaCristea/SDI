@@ -23,13 +23,7 @@ import java.util.stream.Collectors;
 
 @RestController
 public class Controller {
-    /*@Autowired
-    private final SingerRepository repo;
 
-
-    public Controller(SingerRepository repo) {
-        this.repo = repo;
-    }*/
 
     @Autowired
     private final SingerService singerService;
@@ -62,7 +56,10 @@ public class Controller {
     public List<SingerDTOWithId> getAll(@PathVariable int page, @PathVariable int size)
     {
         PageRequest pr = PageRequest.of(page, size);
-        return this.singerService.getAll(pr);
+        List<SingerDTOWithId> singers = this.singerService.getAll(pr);
+        singers.sort(Comparator.comparing(SingerDTOWithId::getLastName).thenComparing(SingerDTOWithId::getFirstName));
+        return singers;
+        //return this.singerService.getAll(pr);
 
     }
 
@@ -70,44 +67,23 @@ public class Controller {
     @GetMapping("/singers/{id}")
     public SingerDTO getSingerById(@PathVariable("id") String id)
     {
-        /*Integer singer_id = Integer.parseInt(id);
-        if (repo.findById(singer_id ).isEmpty())
-            throw new SingerNotFoundException(singer_id) ;
-
-
-
-        ModelMapper modelMapper = new ModelMapper();
-        modelMapper.typeMap(Singer.class, SingerDTO.class).addMapping(singer -> singer.getRecordLable(), SingerDTO::setRecLbl);
-        SingerDTO singerDTO = modelMapper.map(repo.findById(singer_id ).get(), SingerDTO.class);
-        return singerDTO;*/
-
         return this.singerService.getSingerById(id);
+    }
 
 
+    @PostMapping("/singers")
+    public void createSinger(@RequestBody SingerDTOWithId singer)
+    {
+        //System.out.println(singer.getRecordLable());
+        this.singerService.createSinger(singer);
     }
 
 
 
     @PutMapping("/singers/{id}")
-    Singer replaceSinger(@RequestBody Singer newSinger, @PathVariable Integer id)
+    public void replaceSinger(@RequestBody SingerDTOWithId newSinger, @PathVariable Integer id)
     {
-        /*return repo.findById(id)
-                .map(singer -> {
-                    singer.setAge(newSinger.getAge());
-                    singer.setCity(newSinger.getCity());
-                    singer.setFirstName(newSinger.getFirstName());
-                    singer.setLastName(newSinger.getLastName());
-                    singer.setTypeOfMusic(newSinger.getTypeOfMusic());
-                    return repo.save(singer);
-                })
-                .orElseGet(() -> {
-                    newSinger.setIdSinger(id);
-                    return repo.save(newSinger);
-                });*/
-
-        return singerService.replaceSinger(newSinger, id);
-
-
+        singerService.replaceSinger(newSinger, id);
     }
 
 
@@ -122,13 +98,6 @@ public class Controller {
     @GetMapping("/singers/greaterThan/{givenAge}")
     public List<SingerDTOWithId> findByAgeGreaterThanEqual(@PathVariable Integer givenAge)
     {
-        /*ModelMapper modelMapper = new ModelMapper();
-        modelMapper.typeMap(Singer.class, SingerDTOWithId.class).addMapping(singer -> singer.getRecordLable().getIdRecLbl(), SingerDTOWithId::setRecLblId);
-        List<SingerDTOWithId> singerDTOWithIds = repo.findByAgeGreaterThanEqual(givenAge).stream()
-                .map(singer -> modelMapper.map(singer, SingerDTOWithId.class))
-                .collect(Collectors.toList());
-        return singerDTOWithIds;*/
-
         return singerService.findByAgeGreaterThanEqual(givenAge);
         //return repo.findByAgeGreaterThanEqual(givenAge);
     }
@@ -138,34 +107,13 @@ public class Controller {
     @GetMapping("/average-nr-songs")
     public List<SingerDTOForAvg> singersOrderedByAlbumNrOfSongs()
     {
-        /*ModelMapper modelMapper=new ModelMapper();
-        List<Singer> singersList = repo.findAll();
-
-        singersList.sort(Comparator.comparing(Singer::getAverageAlbumNrSongs)
-                .reversed());
-
-        List<SingerDTOForAvg> singerDTOForAvgList=new ArrayList<>();
-        //List<GroupDTOForAvg> groupDTOForAvgList=new ArrayList<>();
-        for(Singer sg: singersList)
-        {
-            if(!Double.isNaN(sg.getAverageAlbumNrSongs()))
-            {
-                SingerDTOForAvg singerDTOForAvg=modelMapper.map(sg, SingerDTOForAvg.class);
-                singerDTOForAvg.setId(sg.getIdSinger());
-                singerDTOForAvg.setFirstName(sg.getFirstName());
-                singerDTOForAvg.setLastName(sg.getLastName());
-                singerDTOForAvg.setAge(sg.getAge());
-                singerDTOForAvg.setCity(sg.getCity());
-                singerDTOForAvg.setTypeOfMusic(sg.getTypeOfMusic());
-                singerDTOForAvg.setAvgAlbumNrSongs(sg.getAverageAlbumNrSongs());
-                singerDTOForAvgList.add(singerDTOForAvg);
-
-
-            }
-        }
-        return singerDTOForAvgList;*/
-
         return this.singerService.singersOrderedByAlbumNrOfSongs();
+    }
+
+    @GetMapping("/singers/autocomplete")
+    public List<SingerDTO> getSg(@RequestParam String query)
+    {
+        return this.singerService.getSingersAutocomplete(query);
     }
 
 

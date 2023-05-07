@@ -6,6 +6,8 @@ import com.example.A2MavenTry.Model.GroupDTO;
 import com.example.A2MavenTry.Repository.GroupRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,14 +23,23 @@ public class GroupService {
         this.groupRepo = groupRepo;
     }
 
+
+    public Long countAllGroups()
+    {
+        return this.groupRepo.count();
+    }
+
     //@GetMapping("/groups")
-    public List<GroupDTO> getAllGroups()
+    public List<GroupDTO> getAllGroups(PageRequest pr)
     {
         ModelMapper modelMapper = new ModelMapper();
-
-        return groupRepo.findAll().stream()
+        Page<Group> groups = groupRepo.findAll(pr);
+        List<GroupDTO> groupDTOS= groups.stream()
                 .map(group -> modelMapper.map(group, GroupDTO.class))
                 .collect(Collectors.toList());
+
+       return groupDTOS;
+
     }
 
     //@GetMapping("/groups/{id}")
@@ -44,15 +55,16 @@ public class GroupService {
     }
 
     //@PostMapping("/groups")
-    public Group newGroup ( Group newGr)
+    public void newGroup ( Group newGr)
     {
-        return groupRepo.save(newGr);
+         groupRepo.save(newGr);
     }
 
     //@PutMapping("/groups/{id}")
-    public Group replaceGroup( Group newGr,  Integer id)
+    public void replaceGroup( Group newGr,  Integer id)
     {
-        return groupRepo.findById(id)
+        //System.out.println(newGr);
+        groupRepo.findById(id)
                 .map(group -> {
                     group.setMembers(newGr.getMembers());
                     group.setDateFormed(newGr.getDateFormed());
@@ -60,6 +72,7 @@ public class GroupService {
                     group.setMusicSpecialization(newGr.getMusicSpecialization());
                     group.setReview(newGr.getReview());
                     group.setDescription(newGr.getDescription());
+                    //System.out.println(group);
                     return groupRepo.save(group);
                 })
                 .orElseGet(() -> {
@@ -72,6 +85,21 @@ public class GroupService {
     public void deleteGroup( Integer id)
     {
         groupRepo.deleteById(id);
+    }
+
+
+    public List<GroupDTO> getGroupsAutocomplete(String query)
+    {
+        ModelMapper modelMapper=new ModelMapper();
+        List<Group> groups=groupRepo.findAll();
+
+        List<GroupDTO> groupsDTO= groups.stream()
+                .map(group -> modelMapper.map(group, GroupDTO.class))
+                .collect(Collectors.toList());
+
+        return groupsDTO.stream()
+                .filter(gr -> gr.getNameGr().toLowerCase().contains(query.toLowerCase()))
+                .collect(Collectors.toList());
     }
 
 }

@@ -12,6 +12,7 @@ import com.example.A2MavenTry.Service.AlbumService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.Banner;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -42,16 +43,28 @@ public class AlbumController {
     }
 
 
-
-    @GetMapping("/albums")
+    /*@GetMapping("/albums")
     public List<AlbumDTOWithId> getAllAlbums()
     {
-        /*ModelMapper modelMapper=new ModelMapper();
+        *//*ModelMapper modelMapper=new ModelMapper();
         return albumsRepository.findAll().stream()
                 .map(al -> modelMapper.map(al, AlbumDTOWithId.class))
                 .collect(Collectors.toList());
-*/
+*//*
         return this.albumService.getAllAlbums();
+    }*/
+
+    @GetMapping("/albums/countAll")
+    public Long countAllAlbums()
+    {
+        return this.albumService.countAllAlbums();
+    }
+
+    @GetMapping("/albums/page/{page}/size/{size}")
+    public List<AlbumDTOWithId> getAllAlbums(@PathVariable int page, @PathVariable int size)
+    {
+        PageRequest pr = PageRequest.of(page, size);
+        return this.albumService.getAllAlbums(pr);
     }
 
     @GetMapping("/albums/{id}")
@@ -73,48 +86,34 @@ public class AlbumController {
 
 
 
-
-    //create/add Group for a Singer
+    /*//create/add Group for a Singer
     @PostMapping("/albums/singers/{id}/groups/{idd}")
     public Albums addAlbumToSingerAndGroup(@PathVariable("id") Integer id, @PathVariable("idd") Integer idd, @RequestBody Albums album)
     {
-        //find singer by id
-        /*Singer singer = singerRepository.findById(id)
-                .orElseThrow(() -> new SingerNotFoundException(id));
-
-        //find group by id
-        Group group = groupRepository.findById(idd)
-                .orElseThrow(() -> new GroupNotFoundException(idd));
-
-        album.setSinger(singer);
-        album.setGroup(group);
-
-        Albums al = albumsRepository.save(album);
-
-        singer.getAlbums().add(al);
-        group.getAlbums().add(al);
-        return al;*/
-
         return this.albumService.addAlbumToSingerAndGroup(id, idd, album);
 
+    }*/
+
+    @PostMapping("/albums")
+    public void createALbum(@RequestBody AlbumDTOWithId albumDTOWithId)
+    {
+        this.albumService.createAlbum(albumDTOWithId);
     }
 
 
-    @PutMapping("/albums/{id}")
-    Albums replaceAlbum(@RequestBody Albums al, @PathVariable Integer id)
+    /*@PutMapping("/albums/{id}")
+    Albums replaceAlbum(@RequestBody AlbumDTOWithId al, @PathVariable Integer id)
     {
-        /*return albumsRepository.findById(id)
-                .map(album -> {
-                    album.setAlbumName(al.getAlbumName());
-                    album.setYearRelease(al.getYearRelease());
-                    album.setNoSongs(al.getNoSongs());
-                    return albumsRepository.save(album);
-                })
-                .orElseGet(() -> {
-                    al.setIdAlbum(id);
-                    return albumsRepository.save(al);
-                });*/
+
         return albumService.replaceAlbum(al, id);
+    }*/
+
+
+    @PutMapping("/albums/{id}")
+    public void replaceAlbum(@RequestBody AlbumDTOWithId al, @PathVariable Integer id)
+    {
+
+        albumService.replaceAlbum(al, id);
     }
 
     @DeleteMapping("/albums/{id}")

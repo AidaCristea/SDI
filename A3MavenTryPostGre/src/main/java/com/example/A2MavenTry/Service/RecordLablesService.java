@@ -4,6 +4,8 @@ import com.example.A2MavenTry.Exceptions.RecordLableNotFoundException;
 import com.example.A2MavenTry.Model.*;
 import com.example.A2MavenTry.Repository.RecordLableRepository;
 import com.example.A2MavenTry.Repository.SingerRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,12 +64,27 @@ public class RecordLablesService {
 
 
     //@GetMapping("/recordLbls/{id}")
-    public RecordLable getRecLblById( Integer id)
+
+    //from RecordLble to RecordLableDTOWithSingerId
+    public RecordLableDTO getRecLblById( String id)
     {
-        if(rLrepo.findById(id).isEmpty())
-            throw new RecordLableNotFoundException(id);
-        RecordLable recordLable=rLrepo.findById(id).get();
-        return recordLable;
+        Integer rec_id = Integer.parseInt(id);
+        if(rLrepo.findById(rec_id).isEmpty())
+            throw new RecordLableNotFoundException(rec_id);
+        RecordLable recordLable=rLrepo.findById(rec_id).get();
+
+        ModelMapper modelMapper=new ModelMapper();
+        //modelMapper.typeMap(RecordLable.class, RecordLableDTOWithSingerId.class).addMapping(recLbl -> recLbl.getSingers(), RecordLableDTOWithSingerId::setSingersId);
+
+        //RecordLableDTOWithSingerId recDtoId = modelMapper.map(rLrepo.findById(rec_id).get(), RecordLableDTOWithSingerId.class);
+
+
+        //RecordLableDTOWithSingerId recIdSing = modelMapper.map(recordLable, RecordLableDTOWithSingerId.class);
+        RecordLableDTO recIdSing = modelMapper.map(recordLable, RecordLableDTO.class);
+
+        //modelMapper.typeMap(RecordLable.class, RecordLableDTOWithSingerId)
+
+        return recIdSing;
 
     }
 
@@ -227,7 +244,8 @@ public class RecordLablesService {
     //@GetMapping("/average-age")
     public List<RecordLableDTOForAvg> recordLableOrderBySingerAgeAvg(PageRequest pr)
     {
-        ModelMapper modelMapper = new ModelMapper();
+        //using streams
+        /*ModelMapper modelMapper = new ModelMapper();
         List<RecordLable> recordLableList = rLrepo.findAll();
 
         recordLableList.sort(Comparator.comparingDouble(RecordLable::getAverageSingerAge)
@@ -248,10 +266,40 @@ public class RecordLablesService {
                 recordLableDTOForAvg.setNrCollaborations(rl.getNrCollaborations());
                 recordLableDTOForAvgList.add(recordLableDTOForAvg);
             }
-        }
+        }*/
+
+
+        //codul asta genereaza un query pentru fiecare recordlable. Trebuie sa refac functia astfel incat sa genereze un singur query (probabil cu inner join si group by) ca sa il foloseasca doar pe asta, sa nu genereze pentru fiecare unul nou
+
+        ModelMapper modelMapper = new ModelMapper();
+        List<RecordLableDTOForAvg> recordLableDTOForAvgList = rLrepo.findAll().stream()
+                .filter(rl -> !Double.isNaN(rl.getAverageSingerAge()))
+                .sorted(Comparator.comparingDouble(RecordLable::getAverageSingerAge).reversed())
+                .map(rl -> {
+                    RecordLableDTOForAvg recordLableDTOForAvg = modelMapper.map(rl, RecordLableDTOForAvg.class);
+                    recordLableDTOForAvg.setAvgSingerAge(rl.getAverageSingerAge());
+                    recordLableDTOForAvg.setPrice(rl.getPrice());
+                    recordLableDTOForAvg.setAddress(rl.getAddress());
+                    recordLableDTOForAvg.setReview(rl.getReview());
+                    recordLableDTOForAvg.setId(rl.getIdRecLbl());
+                    recordLableDTOForAvg.setNameRl(rl.getNameRl());
+                    recordLableDTOForAvg.setNrCollaborations(rl.getNrCollaborations());
+                    return recordLableDTOForAvg;
+                })
+                .collect(Collectors.toList());
 
         return recordLableDTOForAvgList;
 
+    }
+
+    public List<RecordLable> getRecordsAutocomplete( String query)
+    {
+
+        List<RecordLable> recordLables=rLrepo.findAll();
+
+        return recordLables.stream()
+                .filter(reclbl -> reclbl.getNameRl().toLowerCase().contains(query.toLowerCase()))
+                .collect(Collectors.toList());
     }
 
 }

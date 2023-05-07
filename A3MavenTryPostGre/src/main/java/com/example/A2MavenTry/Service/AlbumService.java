@@ -9,6 +9,9 @@ import com.example.A2MavenTry.Repository.GroupRepository;
 import com.example.A2MavenTry.Repository.SingerRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.Banner;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,13 +35,20 @@ public class AlbumService {
         this.singerRepository = singerRepository;
     }
 
+    public Long countAllAlbums() {
+        return albumsRepository.count();
+    }
+
     //@GetMapping("/albums")
-    public List<AlbumDTOWithId> getAllAlbums()
+    public List<AlbumDTOWithId> getAllAlbums(PageRequest pr)
     {
         ModelMapper modelMapper=new ModelMapper();
-        return albumsRepository.findAll().stream()
+        Page<Albums> albums=albumsRepository.findAll(pr);
+        List<AlbumDTOWithId> albumDTOWithIds = albums.stream()
                 .map(al -> modelMapper.map(al, AlbumDTOWithId.class))
                 .collect(Collectors.toList());
+
+        return albumDTOWithIds;
 
     }
 
@@ -57,6 +67,42 @@ public class AlbumService {
         return albumsRepository.save(al);
     }*/
 
+
+    public void createAlbum(AlbumDTOWithId albumDTOWithId)
+    {
+        ModelMapper modelMapper=new ModelMapper();
+
+        Singer finalSinger=null;
+        Group finalGroup=null;
+
+        Integer id_singer = albumDTOWithId.getIdSinger();
+        for(Singer sg: singerRepository.findAll())
+        {
+            if(sg.getIdSinger()==id_singer)
+            {
+                finalSinger=sg;
+                break;
+            }
+        }
+
+        Integer id_group = albumDTOWithId.getIdGroup();
+        for(Group gr: groupRepository.findAll())
+        {
+            if(gr.getIdGroup()==id_group)
+            {
+                finalGroup=gr;
+                break;
+            }
+        }
+
+        Albums album = modelMapper.map(albumDTOWithId, Albums.class);
+        album.setGroup(finalGroup);
+        album.setSinger(finalSinger);
+
+        albumsRepository.save(album);
+
+
+    }
 
 
 
@@ -86,7 +132,7 @@ public class AlbumService {
 
 
     //@PutMapping("/albums/{id}")
-    public Albums replaceAlbum( Albums al, Integer id)
+    /*public Albums replaceAlbum( Albums al, Integer id)
     {
         return albumsRepository.findById(id)
                 .map(album -> {
@@ -99,6 +145,53 @@ public class AlbumService {
                     al.setIdAlbum(id);
                     return albumsRepository.save(al);
                 });
+    }*/
+
+    public void replaceAlbum(AlbumDTOWithId albumDTOWithId, Integer id)
+    {
+        ModelMapper modelMapper=new ModelMapper();
+
+        Singer finalSinger =null;
+        Group finalGroup = null;
+
+        Integer id_singer = albumDTOWithId.getIdSinger();
+        for(Singer sg: singerRepository.findAll())
+        {
+            if(sg.getIdSinger()==id_singer)
+            {
+                finalSinger=sg;
+                break;
+            }
+        }
+
+        Integer id_group = albumDTOWithId.getIdGroup();
+        for(Group gr: groupRepository.findAll())
+        {
+            if(gr.getIdGroup()==id_group)
+            {
+                finalGroup=gr;
+                break;
+            }
+        }
+
+        Albums album=modelMapper.map(albumDTOWithId, Albums.class);
+        album.setSinger(finalSinger);
+        album.setGroup(finalGroup);
+
+        albumsRepository.findById(id)
+                .map(al -> {
+                    al.setAlbumName(album.getAlbumName());
+                    al.setYearRelease(album.getYearRelease());
+                    al.setNoSongs(album.getNoSongs());
+                    al.setGroup(album.getGroup());
+                    al.setSinger(album.getSinger());
+                    return albumsRepository.save(al);
+                })
+                .orElseGet(() -> {
+                    album.setIdAlbum(id);
+                    return albumsRepository.save(album);
+                });
+
     }
 
     //@DeleteMapping("/albums/{id}")

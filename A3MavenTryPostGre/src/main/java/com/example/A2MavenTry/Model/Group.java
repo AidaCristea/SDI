@@ -21,13 +21,12 @@ public class Group implements Serializable {
     private String nameGr;
     private String musicSpecialization;
     private String review;
-
     private String description;
 
 
     @OneToMany(mappedBy = "group", fetch = FetchType.LAZY,
             cascade = CascadeType.ALL)
-    List<Albums> albums;
+    private List<Albums> albums;
 
     public double getAverageAlbumNrSongs()
     {

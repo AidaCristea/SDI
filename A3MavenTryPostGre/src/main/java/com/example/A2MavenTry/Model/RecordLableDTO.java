@@ -13,6 +13,16 @@ public class RecordLableDTO {
     public RecordLableDTO(){}
 
     public RecordLableDTO(String nameRl, String address, Integer price, String review, Integer nrCollaborations) {
+
+        this.nameRl = nameRl;
+        this.address = address;
+        this.price = price;
+        this.review = review;
+        this.nrCollaborations = nrCollaborations;
+    }
+
+    public RecordLableDTO(Integer id, String nameRl, String address, Integer price, String review, Integer nrCollaborations) {
+        this.id = id;
         this.nameRl = nameRl;
         this.address = address;
         this.price = price;

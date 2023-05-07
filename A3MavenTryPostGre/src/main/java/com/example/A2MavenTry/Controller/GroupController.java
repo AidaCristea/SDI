@@ -8,6 +8,7 @@ import com.example.A2MavenTry.Service.GroupService;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -32,17 +33,33 @@ public class GroupController {
         this.groupService = groupService;
     }
 
-    @GetMapping("/groups")
+    /*@GetMapping("/groups")
     public List<GroupDTO> getAllGroups()
     {
-        /*ModelMapper modelMapper = new ModelMapper();
+        *//*ModelMapper modelMapper = new ModelMapper();
 
         return groupRepo.findAll().stream()
                 .map(group -> modelMapper.map(group, GroupDTO.class))
-                .collect(Collectors.toList());*/
+                .collect(Collectors.toList());*//*
 
         return this.groupService.getAllGroups();
+    }*/
+
+    @GetMapping("/groups/countAll")
+     public Long countAllGroups()
+    {
+        return this.groupService.countAllGroups();
     }
+
+    @GetMapping("/groups/page/{page}/size/{size}")
+    public List<GroupDTO> getAllGroups(@PathVariable int page, @PathVariable int size)
+    {
+        PageRequest pr = PageRequest.of(page, size);
+        return this.groupService.getAllGroups(pr);
+    }
+
+
+
 
     @GetMapping("/groups/{id}")
     public GroupDTO getGroup(@PathVariable Integer id)
@@ -59,30 +76,15 @@ public class GroupController {
     }
 
     @PostMapping("/groups")
-    Group newGroup (@RequestBody Group newGr)
+    void newGroup (@RequestBody Group newGr)
     {
-        /*return groupRepo.save(newGr);*/
-        return this.groupService.newGroup(newGr);
+        this.groupService.newGroup(newGr);
     }
 
     @PutMapping("/groups/{id}")
-    Group replaceGroup(@RequestBody Group newGr, @PathVariable Integer id)
+    void replaceGroup(@RequestBody Group newGr, @PathVariable Integer id)
     {
-        /*return groupRepo.findById(id)
-                .map(group -> {
-                    group.setMembers(newGr.getMembers());
-                    group.setDateFormed(newGr.getDateFormed());
-                    group.setNameGr(newGr.getNameGr());
-                    group.setMusicSpecialization(newGr.getMusicSpecialization());
-                    group.setReview(newGr.getReview());
-                    return groupRepo.save(group);
-                })
-                .orElseGet(() -> {
-                    newGr.setIdGroup(id);
-                    return groupRepo.save(newGr);
-                });*/
-
-        return this.groupService.replaceGroup(newGr, id);
+        this.groupService.replaceGroup(newGr, id);
     }
 
     @DeleteMapping("/groups/{id}")
@@ -92,6 +94,13 @@ public class GroupController {
         this.groupService.deleteGroup(id);
     }
 
+    @GetMapping("/groups/autocomplete")
+    public List<GroupDTO> get(@RequestParam String query)
+    {
+        //List<Group> groups=groupService.getGroupsAutocomplete(query);
+        //System.out.println(groups.get(1));
+        return this.groupService.getGroupsAutocomplete(query);
+    }
 
     /*@GetMapping("/average-nr-songs")
     public List<GroupDTOForAvg> groupsOrderedByAlbumNrOfSongs()
